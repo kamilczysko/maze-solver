@@ -16,8 +16,11 @@ class Node:
     def get_col(self):
         return self.col
 
+    def is_in_location(self, row, col):
+        return self.row == row and self.col == col
+
     def get_number_of_children(self):
-        return self.children.size()
+        return len(self.children)
 
     def get_next_child(self):
         try:
@@ -31,5 +34,8 @@ class Node:
     def add_child(self, child):
         self.children.append(child)
 
-    def __str__(self) -> str:
+    def has_child(self, child):
+        return child in self.children
+
+    def __str__(self):
         return str(self.row) + " - " + str(self.col) + " - " + str(self.children) + " - " + str(self.entry)

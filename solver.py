@@ -110,8 +110,14 @@ def set_green(row, col):
     i[row][col][1] = 250;
     i[row][col][2] = 0;
 
+def set_blue(row, col):
+    i[row][col][0] = 0;
+    i[row][col][1] = 0;
+    i[row][col][2] = 250;
+
 def reduce_nodes():
     is_free = True
+    print("reduce: ", len(nodes))
     for n in nodes:
         row_num = int(n.row)
         col_num = int(n.col)
@@ -140,10 +146,51 @@ def get_start_node():
             return n
     return None
 
+def get_iter_params(a,b):
+    step = -1
+    if a-b < 0:
+        step = 1
+    return step
 
+def get_route(start, end):
+    path=[]
+    if start.get_row() == end.get_row():
+        step = get_iter_params(start.get_col(), end.get_col())
+        for c in range(start.get_col(), end.get_col(), step):
+            path.append(Node.Node(start.get_row(), c))
+    elif start.get_col() == end.get_col():
+        step = get_iter_params(start.get_row(), end.get_row())
+        for c in range(start.get_row(), end.get_row(), step):
+            path.append(Node.Node(c, start.get_col()))
+    path.append(end)
+    return path
+
+walk_result = []
 start_node = get_start_node()
+walk_result.append(start_node)
 if start_node is not None:
-    pass
+    is_end = False
+    actual_node = start_node
+    while (not is_end):
+        row_num = actual_node.row
+        col_num = actual_node.col
+        top = get_node_on_top(row_num, col_num)
+        down = get_node_on_down(row_num, col_num)
+        left = get_node_on_left(row_num, col_num)
+        right = get_node_on_right(row_num, col_num)
+        n = list(filter(None ,[top, down, left, right]))
+        tmp_path = []
+        if n[0] not in walk_result:
+            tmp_path = get_route(walk_result[-1], n[0])
+        if len(n) > 1 and n[1] not in walk_result:
+            tmp_path = get_route(walk_result[-1], n[1])
+        walk_result.extend(tmp_path)
+        if walk_result[-1].is_entry():
+            is_end = True
+        actual_node = walk_result[-1]
+
+for n in walk_result:
+    set_blue(n.get_row(), n.get_col())
 
 fromarray = Image.fromarray(i)
 fromarray.save("dupa.png")

@@ -12,7 +12,7 @@ def conv(var):
     return 0
 
 
-image = Image.open('maze.png')
+image = Image.open('maze_massive.png')
 i = np.array(image)
 convert = image.convert('1')
 img = np.array(convert)
@@ -22,7 +22,8 @@ for row_num in img:
 
 
 def can_move_vertical(row_num, col_num):
-    if (len(maze)-1 > row_num and maze[row_num + 1][col_num] == 1) or (row_num > 0 and maze[row_num - 1][col_num] == 1):
+    if (len(maze) - 1 > row_num and maze[row_num + 1][col_num] == 1) or (
+            row_num > 0 and maze[row_num - 1][col_num] == 1):
         return True
     return False
 
@@ -56,18 +57,20 @@ def find_entry(maze_array):
 
     return None
 
+
 def if_start_or_exit(row, col):
     if row == 0 or col == 0:
         return True
-    if row == len(maze)-1 or col == len(maze[0])-1:
+    if row == len(maze) - 1 or col == len(maze[0]) - 1:
         return True
     return False
+
 
 def get_node_on_right(node):
     if node.col < len(maze[node.row]) - 1:
         i = node.col
         i += 1
-        while i <= (len(maze[node.row]) - 1) and maze[node.row][i] == 1 :
+        while i <= (len(maze[node.row]) - 1) and maze[node.row][i] == 1:
             if can_move_vertical(node.row, i) or if_start_or_exit(node.row, i):
                 new_node = Node.Node(node.row, i, i == len(maze[node.row]) - 1)
                 # node.add_child(new_node)
@@ -80,7 +83,7 @@ def get_node_on_left(node):
     if node.col > 0:
         i = node.col
         i -= 1
-        while  i >= 0 and maze[node.row][i] == 1:
+        while i >= 0 and maze[node.row][i] == 1:
             if can_move_vertical(node.row, i) or if_start_or_exit(node.row, i):
                 new_node = Node.Node(node.row, i, i == 0)
                 # node.add_child(new_node)
@@ -127,6 +130,7 @@ def set_blue(row, col):
     i[row][col][2] = 250;
     i[row][col][3] = 250;
 
+
 result_path = []
 entry = find_entry(maze)
 result_path.append(entry)
@@ -145,6 +149,8 @@ entry.add_child(next_node)
 result_path.append(next_node)
 set_blue(entry.row, entry.col)
 set_blue(next_node.row, next_node.col)
+
+
 def find_next_node(node, prev_node):
     top = get_node_on_top(node)
     left = get_node_on_left(node)
@@ -166,7 +172,10 @@ def find_next_node(node, prev_node):
             set_blue(move.row, move.col)
             node.add_child(move)
             return True
+
+
 find_next_node(next_node, entry)
+
 
 def get_iter_params(a, b):
     step = -1
@@ -176,48 +185,28 @@ def get_iter_params(a, b):
 
 
 def get_route(start, end):
-    path = []
     if start.get_row() == end.get_row():
         step = get_iter_params(start.get_col(), end.get_col())
         for c in range(start.get_col(), end.get_col(), step):
-            path.append(Node.Node(start.get_row(), c))
+            set_blue(start.get_row(), c)
     elif start.get_col() == end.get_col():
         step = get_iter_params(start.get_row(), end.get_row())
         for c in range(start.get_row(), end.get_row(), step):
-            path.append(Node.Node(c, start.get_col()))
-    path.append(end)
-    return path
+            set_blue(c, start.get_col())
 
 
 f_node = result_path[0]
 
 
-# walk_result = result_path
-# start_node = walk_result[0]
-# walk_result.append(start_node)
-# if start_node is not None:
-#     is_end = False
-#     actual_node = start_node
-#     while (not is_end):
-#         row_num = actual_node.row
-#         col_num = actual_node.col
-#         top = get_node_on_top(actual_node)
-#         down = get_node_on_down(actual_node)
-#         left = get_node_on_left(actual_node)
-#         right = get_node_on_right(actual_node)
-#         n = list(filter(None ,[top, down, left, right]))
-#         tmp_path = []
-#         if n[0] not in walk_result:
-#             tmp_path = get_route(walk_result[-1], n[0])
-#         if len(n) > 1 and n[1] not in walk_result:
-#             tmp_path = get_route(walk_result[-1], n[1])
-#         walk_result.extend(tmp_path)
-#         if walk_result[-1].is_entry():
-#             is_end = True
-#         actual_node = walk_result[-1]
+def draw_path(node):
+    child = node.get_next_child()
+    if child is None:
+        return
+    get_route(node, child)
+    draw_path(child)
 
-# for n in walk_result:
-#     set_green(n.get_row(), n.get_col())
+
+draw_path(f_node)
 
 fromarray = Image.fromarray(i)
 fromarray.save("dupa2.png")

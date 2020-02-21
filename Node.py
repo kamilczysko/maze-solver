@@ -28,6 +28,11 @@ class Node:
         except:
             return None
 
+    def __eq__(self, o) -> bool:
+        if o is None:
+            return False
+        return self.row == o.row and self.col == o.col
+
     def is_in_location(self, x, y):
         return self.row == x and self.col == y
 
@@ -39,3 +44,4 @@ class Node:
 
     def __str__(self):
         return str(self.row) + " - " + str(self.col) + " - " + str(self.children) + " - " + str(self.entry)
+

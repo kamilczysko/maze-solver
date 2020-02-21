@@ -9,7 +9,7 @@ def conv(var):
     return 0
 
 
-image = Image.open('maze_big.png')
+image = Image.open('maze_massive.png')
 i = np.array(image)
 convert = image.convert('1')
 img = np.array(convert)
@@ -114,6 +114,7 @@ def set_blue(row, col):
     i[row][col][0] = 0;
     i[row][col][1] = 0;
     i[row][col][2] = 250;
+    i[row][col][3] = 180;
 
 def reduce_nodes():
     is_free = True
